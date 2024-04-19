@@ -1,17 +1,17 @@
 {
-	//https://www.totaltypescript.com/tsconfig-cheat-sheet
-	"compilerOptions": {
-		"lib": ["es2022"],
-		"module": "preserve",
-		"noEmit": true,
-		"strict": true,
-		"noUncheckedIndexedAccess": true,
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"target": "es2022",
-		"allowJs": true,
-		"resolveJsonModule": true,
-		"moduleDetection": "force",
-		"isolatedModules": true
-	}
+  //https://www.totaltypescript.com/tsconfig-cheat-sheet
+  "compilerOptions": {
+    "lib": ["es2022"],
+    "module": "preserve",
+    "noEmit": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true
+  }
 }

@@ -1,234 +1,195 @@
-declare namespace V2Endowment {
-	type Index =
-		| "slug-env-index"
-		| "regnum-env-index"
-		| "chain-id-index"
-		| "chain-index"
-		| "chain-name-index"
-		| "chain-overall-index"
-		| "endow_type-chain-index"
-		| "registration_uuid-index";
+type MaybeEmptyStr = string;
+type Environment = "staging" | "production";
 
-	type MainKeys = {
-		chain_id: Environment; //PK
-		id: EndowID; //SK
-	};
+type EndowDesignation =
+  | "Charity"
+  | "Religious Organization"
+  | "University"
+  | "Hospital"
+  | "Other";
 
-	type Chain_ID_IndexKeys = {
-		chain: Environment; //PK
-		id: EndowID; //SK
-	};
+declare namespace V3Endowment {
+  namespace EndowCount {
+    type Keys = {
+      PK: "Count";
+      SK: Environment;
+    };
 
-	type ChainIndexKeys = {
-		chain: Environment; //PK
-	};
+    type NonKeyAttributes = {
+      count: number;
+    };
+  }
 
-	type Chain_Name_IndexKeys = {
-		chain: Environment; //PK
-		name_internal: string; //SK
-	};
+  namespace Endow {
+    type Keys = {
+      PK: `Endow#${number}`;
+      SK: Environment;
+    };
 
-	type Chain_Overall_IndexKeys = {
-		chain: Environment; //PK
-		overall?: number; //SK
-	};
-	type EndowType_Chain_IndexKeys = {
-		endow_type: "charity"; //PK
-		chain: Environment; //SK
-	};
-	type RegistrationUUIDindexKeys = {
-		registration_uuid?: string; //PK
-	};
+    type SocialMediaURLs = {
+      discord?: MaybeEmptyStr;
+      facebook?: MaybeEmptyStr;
+      instagram?: MaybeEmptyStr;
+      linkedin?: MaybeEmptyStr;
+      tiktok?: MaybeEmptyStr;
+      twitter?: MaybeEmptyStr;
+      youtube?: MaybeEmptyStr;
+    };
 
-	type SlugIndexKeys = {
-		slug?: string; //PK
-		chain_id: Environment; //SK
-	};
+    type NonKeyAttributes = {
+      id: number;
+      slug?: MaybeEmptyStr;
+      env: Environment;
+      registration_number: string;
+      name: string;
+      endow_designation: EndowDesignation;
+      overview?: MaybeEmptyStr;
+      tagline?: MaybeEmptyStr;
+      image?: string;
+      logo?: string;
+      card_img?: string;
+      hq_country: string;
+      active_in_countries: string[];
+      street_address?: MaybeEmptyStr;
+      social_media_urls: SocialMediaURLs;
+      url?: MaybeEmptyStr;
+      sdgs: UNSDG_NUMS[];
+      receiptMsg?: MaybeEmptyStr;
 
-	type RegNumEnvIndexKeys = {
-		/** EIN or Registration number for FSA */
-		registration_number: string;
-		chain_id: Environment; //SK
-	};
+      kyc_donors_only: boolean;
+      hide_bg_tip: boolean;
+      fiscal_sponsored: boolean;
+      claimed: boolean;
+      published: boolean;
+      sfCompounded: boolean;
+    };
 
-	type SocialMediaURLs = {
-		discord: MaybeEmptyStr;
-		facebook: MaybeEmptyStr;
-		instagram: MaybeEmptyStr;
-		linkedin: MaybeEmptyStr;
-		tiktok: MaybeEmptyStr;
-		twitter: MaybeEmptyStr;
-		youtube: MaybeEmptyStr;
-	};
+    type DBRecord = Keys & NonKeyAttributes;
 
-	type Milestone = {
-		milestone_date: ISODate;
-		milestone_title: string;
-		milestone_description: string;
-		milestone_media: string;
-	};
+    //fields used in web-app
+    type Item = Pick<
+      DBRecord,
+      | "id"
+      | "slug"
+      | "active_in_countries"
+      | "endow_designation"
+      | "fiscal_sponsored"
+      | "hide_bg_tip"
+      | "hq_country"
+      | "image"
+      | "card_img"
+      | "kyc_donors_only"
+      | "logo"
+      | "name"
+      | "overview"
+      | "published"
+      | "registration_number"
+      | "sdgs"
+      | "social_media_urls"
+      | "street_address"
+      | "tagline"
+      | "url"
+      | "claimed"
+    >;
 
-	type Program = {
-		program_title: string;
-		program_id: string;
-		program_banner: string;
-		program_description: string;
-		program_milestones: Milestone[];
-	};
+    type SortDirection = "asc" | "desc";
+    type SortKey = "name_internal" | "overall" | "claimed";
 
-	type NonKeyAttributes = {
-		active_in_countries: string[];
-		approved: boolean;
-		card_img?: MaybeEmptyStr;
-		contributor_verification_required: true;
-		endow_designation: EndowDesignation;
-		fiscal_sponsored: boolean;
-		hide_bg_tip?: boolean;
-		hq_country: string;
-		image: MaybeEmptyStr;
-		kyc_donors_only: boolean;
-		logo: MaybeEmptyStr;
-		name: string;
-		overview: MaybeEmptyStr;
-		program: Program[];
-		published: boolean;
-		referral_id: MaybeEmptyStr;
-		sdgs: UNSDG_NUMS[];
-		social_media_urls: SocialMediaURLs;
-		status?: "approved";
-		street_address: MaybeEmptyStr;
-		stripe_price_id: string;
-		stripe_product_id: string;
-		tagline?: MaybeEmptyStr;
-		tier: 3; //no other tier atm
-		url?: string;
-		receiptMsg?: string;
-		/** endowment is not claimed if `false` only */
-		claimed?: boolean;
-	};
+    type ItemsQueryParams = {
+      query: string;
+      sort?: `${SortKey}+${SortDirection}`;
+      page: number;
+      /** EndowDesignation csv */
+      endow_designation?: string;
+      /** sdg num csv */
+      sdgs?: string;
+      /** boolean csv */
+      kyc_only?: string;
+      /** boolean csv */
+      claimed?: string;
+      /** country name csv */
+      countries?: string;
+      env: Environment;
+      /** Item key csv */
+      fields?: string;
+    };
 
-	// Unused & Depreciated Attributes: kept here as optional fields
-	// only because older records contain the field. Do not use!!
-	type DepreciatedAttributes = {
-		admin_users?: string[];
-		bank_statement_file?: FileObject;
-		bank_verification_status?: BankVerificationStatus;
-		charity_navigator_rating?: "";
-		contact_email?: string;
-		cash_eligible?: boolean;
-		on_hand_liq?: number;
-		on_hand_lock?: number;
-		on_hand_overall?: number;
-		owner?: string;
-		proposal_link?: number;
-		total_liq?: number;
-		total_lock?: number;
-		wise_recipient_id?: number;
-	};
+    type ItemQueryParams = {
+      fields?: string; //csv string
+      slug?: string;
+      env: Environment;
+    };
+  }
 
-	type DBRecord = MainKeys &
-		Chain_ID_IndexKeys &
-		ChainIndexKeys &
-		Chain_Name_IndexKeys &
-		Chain_Overall_IndexKeys &
-		EndowType_Chain_IndexKeys &
-		RegistrationUUIDindexKeys &
-		RegNumEnvIndexKeys &
-		SlugIndexKeys &
-		NonKeyAttributes &
-		DepreciatedAttributes;
+  namespace RegNumEnvGsi {
+    type Name = "regnum-env-gsi";
+    type Keys = Pick<Endow.NonKeyAttributes, "registration_number" | "env">;
+    type DBRecord = Keys &
+      Pick<Endow.NonKeyAttributes, "claimed" | "name" | "hq_country">;
 
-	/** only used to verify if EIN is already claimed */
-	type RegNumEnvIndexRecord = RegNumEnvIndexKeys &
-		MainKeys &
-		Pick<NonKeyAttributes, "claimed" | "name" | "hq_country">;
+    type ItemParams = {
+      env: Environment;
+      ein?: string;
+    };
+  }
+  namespace SlugEnvGsi {
+    type Name = "slug-env-gsi";
+    type Keys = Pick<Endow.NonKeyAttributes, "slug" | "env">;
+    type DBRecord = Endow.DBRecord; //all attributes are copied to this index
+  }
 
-	//fields used in web-app
-	type Item = Pick<
-		DBRecord,
-		| "id"
-		| "slug"
-		| "active_in_countries"
-		| "endow_designation"
-		| "fiscal_sponsored"
-		| "hide_bg_tip"
-		| "hq_country"
-		| "image"
-		| "kyc_donors_only"
-		| "logo"
-		| "name"
-		| "overview"
-		| "program"
-		| "published"
-		| "registration_number"
-		| "sdgs"
-		| "social_media_urls"
-		| "street_address"
-		| "tagline"
-		| "url"
-		| "claimed"
-	>;
+  namespace Program {
+    type Id = string;
+    type Keys = {
+      PK: `Endow#${number}`;
+      SK: `Prog#${Id}`;
+    };
 
-	type ItemQueryParams = {
-		fields?: string; //csv string
-		slug?: string;
-		env: Environment;
-	};
+    type Milestone = {
+      id: string;
+      date: ISODate;
+      title: string;
+      description: string;
+      media?: string;
+    };
 
-	type RegNumEnvItemParams = {
-		env: Environment;
-		ein?: string;
-	};
+    type NonKeyAttributes = {
+      id: Id;
+      title: string;
+      banner?: string;
+      description: string;
+      milestones: Milestone[];
+    };
+    type DBRecord = Keys & NonKeyAttributes;
+  }
 
-	type SortDirection = "asc" | "desc";
-	type SortKey = "name_internal" | "overall" | "claimed";
-
-	type ItemsQueryParams = {
-		query: string;
-		sort?: `${SortKey}+${SortDirection}`;
-		page: number;
-		/** EndowDesignation csv */
-		endow_designation?: string;
-		/** sdg num csv */
-		sdgs?: string;
-		/** boolean csv */
-		kyc_only?: string;
-		/** boolean csv */
-		claimed?: string;
-		/** country name csv */
-		countries?: string;
-		env: Environment;
-		/** Item key csv */
-		fields?: string;
-	};
+  type DBRecord = Endow.DBRecord | Program.DBRecord;
 }
 
 declare namespace Algolia {
-	export type EndowObjectID = `${Environment}-${number}`;
-	export type EndowRecord = { objectID: EndowObjectID } & Required<
-		Pick<
-			V2Endowment.DBRecord,
-			| "active_in_countries"
-			| "card_img"
-			| "chain"
-			| "contributor_verification_required"
-			| "endow_designation"
-			| "endow_type"
-			| "id"
-			| "hq_country"
-			| "image"
-			| "kyc_donors_only"
-			| "logo"
-			| "name"
-			| "name_internal"
-			| "overview"
-			| "program"
-			| "published"
-			| "sdgs"
-			| "tagline"
-			| "tier"
-			| "slug"
-			| "claimed"
-		>
-	>;
+  export type EndowObjectID = `${Environment}-${number}`;
+  export type EndowRecord = {
+    objectID: EndowObjectID;
+    name_internal: string;
+  } & Required<
+    Pick<
+      V3Endowment.Endow.DBRecord,
+      //card UI attribures
+      | "id"
+      | "card_img"
+      | "name"
+      | "tagline"
+      | "hq_country"
+      | "sdgs"
+      | "active_in_countries"
+      | "endow_designation"
+      //icons
+      | "kyc_donors_only"
+      | "claimed"
+
+      //filters
+      | "env"
+      | "published"
+    >
+  >;
 }
