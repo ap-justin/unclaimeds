@@ -1,0 +1,5 @@
+*.txt
+*.json
+node_modules
+!package.json
+!tsconfig.json
