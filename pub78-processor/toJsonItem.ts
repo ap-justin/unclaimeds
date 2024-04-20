@@ -1,8 +1,7 @@
 import { toDBFormat } from "./toDBFormat";
 import type { EndowData } from "./types";
 
-export const toJsonItem =
-  (lastEIN: string) => (item: EndowData, id: number) => {
-    const trailingComma = item.ein !== lastEIN ? "," : "";
-    return `${JSON.stringify(toDBFormat(id, item))}${trailingComma}`;
-  };
+export const toJsonItem = (item: EndowData, id: number, lastEIN: string) => {
+  const trailingComma = item.ein !== lastEIN ? "," : "";
+  return `${JSON.stringify(toDBFormat(id, item))}${trailingComma}`;
+};

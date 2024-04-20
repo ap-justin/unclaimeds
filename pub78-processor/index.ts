@@ -1,15 +1,16 @@
 import fs from "node:fs";
+import path from "node:path";
 import readline from "node:readline";
 import { parseEndow } from "./schema";
 import { toJsonItem } from "./toJSONItem";
 import type { EndowData } from "./types";
 
-const inputFilePath = "./test-processed.txt";
-const dynamoDbFilePath = "./pub78-dynamodb.json";
-const algoliaIndexFilePath = "./pub78-algolia.json";
-const errorFilePath = "./pub78-errors.txt";
+const inputFilePath = path.join(__dirname, "pub78.txt");
+const dynamoDbFilePath = path.join(__dirname, "dynamodb.json");
+const algoliaIndexFilePath = path.join(__dirname, "algolia.json");
+const errorFilePath = path.join(__dirname, "errors.txt");
 /** used to determine if put trailing comma */
-const lastItemEIN = "000852649";
+const lastItemEIN = "010211547";
 /** starting id */
 let id = 104;
 
@@ -34,8 +35,7 @@ let numSuccess = 0;
 let numError = 0;
 
 rl.on("line", (line) => {
-  numLines++;
-
+  console.log(numLines++);
   if (line.length === 0) return;
 
   const texts = line.split("|");
@@ -50,12 +50,12 @@ rl.on("line", (line) => {
   const { error, value: endow } = parseEndow(constructedEndow);
 
   if (error) {
+    console.log(error.details[0]?.message);
     numError++;
     return errorStream.write(`${texts.concat([error.message]).join("|")}\n`);
   }
 
-  const currId = id++;
-  dynamoDBStream.write(toJsonItem(lastItemEIN)(endow, currId));
+  dynamoDBStream.write(toJsonItem(endow, id++, lastItemEIN));
 
   numSuccess++;
 });
