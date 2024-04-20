@@ -147,27 +147,9 @@ function toDBFormat(
     endow_designation: {
       S: "Charity",
     },
-    fiscal_sponsored: {
-      BOOL: false,
-    },
-    hide_bg_tip: {
-      BOOL: false,
-    },
     hq_country: {
       S: "United States",
     },
-
-    kyc_donors_only: {
-      BOOL: false,
-    },
-    sfCompounded: {
-      BOOL: false,
-    },
-
-    published: {
-      BOOL: true,
-    },
-
     sdgs: {
       L: [],
     },

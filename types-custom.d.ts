@@ -56,12 +56,12 @@ declare namespace V3Endowment {
       sdgs: UNSDG_NUMS[];
       receiptMsg?: MaybeEmptyStr;
 
-      kyc_donors_only: boolean;
-      hide_bg_tip: boolean;
-      fiscal_sponsored: boolean;
+      kyc_donors_only?: boolean;
+      hide_bg_tip?: boolean;
+      fiscal_sponsored?: boolean;
       claimed: boolean;
-      published: boolean;
-      sfCompounded: boolean;
+      published?: boolean;
+      sfCompounded?: boolean;
     };
 
     type DBRecord = Keys & NonKeyAttributes;
