@@ -56,12 +56,14 @@ declare namespace V3Endowment {
       sdgs: UNSDG_NUMS[];
       receiptMsg?: MaybeEmptyStr;
 
-      kyc_donors_only?: boolean;
-      hide_bg_tip?: boolean;
-      fiscal_sponsored?: boolean;
+      kyc_donors_only: boolean;
+      fiscal_sponsored: boolean;
       claimed: boolean;
-      published?: boolean;
+
+      //can be optional, default false and need not be explicit
+      hide_bg_tip?: boolean;
       sfCompounded?: boolean;
+      published?: boolean;
     };
 
     type DBRecord = Keys & NonKeyAttributes;
@@ -193,3 +195,10 @@ declare namespace Algolia {
     >
   >;
 }
+
+export type EndowData = {
+  name: string;
+  ein: string;
+  city: string | undefined;
+  state: string | undefined;
+};
