@@ -201,4 +201,5 @@ export type EndowData = {
   ein: string;
   city: string | undefined;
   state: string | undefined;
+  env: Environment;
 };

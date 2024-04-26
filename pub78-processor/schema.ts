@@ -10,6 +10,7 @@ const endowDataShape: StrictSchemaMap<EndowData> = {
     .pattern(/^[0-9]+$/),
   city: Joi.string().min(2),
   state: Joi.string().uppercase().min(2),
+  env: Joi.string().required().valid("staging", "production"),
 };
 
 const schema = Joi.object(endowDataShape);

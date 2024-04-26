@@ -1,38 +1,20 @@
-import fs from "node:fs";
-import path from "node:path";
-import readline from "node:readline";
+import { algoliaIndexFormat, dynamoDBFormat, writer } from "./helpers";
 import { parseEndow } from "./schema";
-import { toJsonItem } from "./toJSONItem";
+import {
+  algoliaStream,
+  dynamoDBStream,
+  env,
+  errorStream,
+  inputStream,
+  rl,
+  startindId,
+} from "./setup";
 import type { EndowData } from "./types";
-
-const inputFilePath = path.join(__dirname, "pub78.txt");
-const dynamoDbFilePath = path.join(__dirname, "dynamodb.json");
-const algoliaIndexFilePath = path.join(__dirname, "algolia.json");
-const errorFilePath = path.join(__dirname, "errors.txt");
-/** used to determine if put trailing comma */
-const lastItemEIN = "010211547";
-/** starting id */
-let id = 104;
-
-// SETUP ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const inputStream = fs.createReadStream(inputFilePath, { encoding: "utf8" });
-const dynamoDBStream = fs.createWriteStream(dynamoDbFilePath, {
-  encoding: "utf8",
-});
-const algoliaStream = fs.createWriteStream(algoliaIndexFilePath, {
-  encoding: "utf-8",
-});
-const errorStream = fs.createWriteStream(errorFilePath, { encoding: "utf8" });
-
-const rl = readline.createInterface({
-  input: inputStream,
-  crlfDelay: Number.POSITIVE_INFINITY,
-});
 
 let numLines = 0;
 let numSuccess = 0;
 let numError = 0;
+let id = startindId;
 
 rl.on("line", (line) => {
   console.log(numLines++);
@@ -45,6 +27,7 @@ rl.on("line", (line) => {
     name: texts[2],
     city: texts[3],
     state: texts[4],
+    env,
   };
 
   const { error, value: endow } = parseEndow(constructedEndow);
@@ -55,7 +38,12 @@ rl.on("line", (line) => {
     return errorStream.write(`${texts.concat([error.message]).join("|")}\n`);
   }
 
-  dynamoDBStream.write(toJsonItem(endow, id++, lastItemEIN));
+  const dbWriter = writer(endow, dynamoDBFormat);
+  const algoliaWriter = writer(endow, algoliaIndexFormat);
+
+  const endowId = ++id;
+  dynamoDBStream.write(dbWriter(endowId));
+  algoliaStream.write(algoliaWriter(endowId));
 
   numSuccess++;
 });
