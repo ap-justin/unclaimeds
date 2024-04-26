@@ -52,14 +52,16 @@ inputStream.on("open", () => {
   dynamoDBStream.write("[");
   algoliaStream.write("[");
 });
+
 inputStream.on("end", () => {
   console.log({ numLines, numSuccess, numError });
-  dynamoDBStream.write("]");
-  algoliaStream.write("]");
+  dynamoDBStream.end("]");
+  algoliaStream.end("]");
   errorStream.end();
 });
 inputStream.on("error", (error) => {
   console.log(error);
-  dynamoDBStream.write("]");
+  dynamoDBStream.end();
   algoliaStream.end();
+  errorStream.end();
 });
