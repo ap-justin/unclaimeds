@@ -9,7 +9,7 @@ const errorFilePath = path.join(__dirname, "errors.txt");
 /** used to determine if put trailing comma */
 export const lastItemEIN = "002067446";
 export const env: Environment = "staging";
-export const startindId = 104;
+export const startingId = 104;
 
 // SETUP ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

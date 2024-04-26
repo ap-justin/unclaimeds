@@ -7,14 +7,14 @@ import {
   errorStream,
   inputStream,
   rl,
-  startindId,
+  startingId,
 } from "./setup";
 import type { EndowData } from "./types";
 
 let numLines = 0;
 let numSuccess = 0;
 let numError = 0;
-let id = startindId;
+let id = startingId;
 
 rl.on("line", (line) => {
   console.log(numLines++);
