@@ -46,10 +46,18 @@ type DT<K extends Key> = V<K> extends boolean
           ? "M"
           : "";
 
+type PrimitiveFormat<T> = T extends number
+  ? `${T}`
+  : T extends string[]
+    ? { S: string }[]
+    : T extends number[]
+      ? { N: `${number}` }[]
+      : T;
+
 type DynamoDBJson = {
   [K in Key]-?: V<K> extends undefined
     ? undefined
-    : Record<DT<K>, V3Endowment.Endow.DBRecord[K]>;
+    : Record<DT<K>, PrimitiveFormat<V3Endowment.Endow.DBRecord[K]>>;
 };
 
 export const dynamoDBFormat: Formatter<DynamoDBJson> = (id: number, endow) => {
@@ -62,7 +70,7 @@ export const dynamoDBFormat: Formatter<DynamoDBJson> = (id: number, endow) => {
       S: "production",
     },
     id: {
-      N: id,
+      N: `${id}`,
     },
     env: {
       S: "production",
@@ -74,7 +82,7 @@ export const dynamoDBFormat: Formatter<DynamoDBJson> = (id: number, endow) => {
       S: name,
     },
     active_in_countries: {
-      L: ["United States"],
+      L: [{ S: "United States" }],
     },
     claimed: {
       BOOL: false,
