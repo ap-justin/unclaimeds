@@ -49,13 +49,18 @@ export const dynamoDBFormat: Formatter<Record<string, any>> = (
     social_media_urls: {},
     street_address: [endow.city, endow.state].filter(Boolean).join(", "),
   };
-  return marshall(unmarshalled);
+  return { Item: marshall(unmarshalled) };
 };
 
-export const writer =
+export const jsonWriter =
   (endow: EndowData, formatter: Formatter<object>) =>
   (id: number): string =>
     `${JSON.stringify(formatter(id, endow))}${
       //trailing comma
       endow.ein !== lastItemEIN ? "," : ""
     }`;
+
+export const dynamoWriter =
+  (endow: EndowData, formatter: Formatter<object>) =>
+  (id: number): string =>
+    `${JSON.stringify(formatter(id, endow))}\n`;

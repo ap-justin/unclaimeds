@@ -1,4 +1,9 @@
-import { algoliaIndexFormat, dynamoDBFormat, writer } from "./helpers";
+import {
+  algoliaIndexFormat,
+  dynamoDBFormat,
+  dynamoWriter,
+  jsonWriter,
+} from "./helpers";
 import { parseEndow } from "./schema";
 import {
   algoliaStream,
@@ -38,8 +43,8 @@ rl.on("line", (line) => {
     return errorStream.write(`${texts.concat([error.message]).join("|")}\n`);
   }
 
-  const dbWriter = writer(endow, dynamoDBFormat);
-  const algoliaWriter = writer(endow, algoliaIndexFormat);
+  const dbWriter = dynamoWriter(endow, dynamoDBFormat);
+  const algoliaWriter = jsonWriter(endow, algoliaIndexFormat);
 
   const endowId = ++id;
   dynamoDBStream.write(dbWriter(endowId));
@@ -49,13 +54,11 @@ rl.on("line", (line) => {
 });
 
 inputStream.on("open", () => {
-  dynamoDBStream.write("[");
   algoliaStream.write("[");
 });
 
 inputStream.on("end", () => {
   console.log({ numLines, numSuccess, numError });
-  dynamoDBStream.end("]");
   algoliaStream.end("]");
   errorStream.end();
 });
