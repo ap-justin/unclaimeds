@@ -1,22 +1,26 @@
 import fs from "node:fs";
 import path from "node:path";
 import readline from "node:readline";
+import zlib from "node:zlib";
 import type { Environment } from "./types";
 const inputFilePath = path.join(__dirname, "pub78-test.txt"); //NOTE: update lastItem EIN
-const dynamoDbFilePath = path.join(__dirname, "dynamodbjson.txt");
+const dynamoDbFilePath = path.join(__dirname, "dynamodbjson.txt.gz");
 const algoliaIndexFilePath = path.join(__dirname, "algolia.json");
 const errorFilePath = path.join(__dirname, "errors.txt");
 /** used to determine if put trailing comma */
-export const lastItemEIN = "002067446";
+export const lastItemEIN = "010211542";
 export const env: Environment = "staging";
-export const startingId = 104;
+export const startingId = 1;
 
 export const inputStream = fs.createReadStream(inputFilePath, {
   encoding: "utf8",
 });
-export const dynamoDBStream = fs.createWriteStream(dynamoDbFilePath, {
+
+export const dynamoDBStream = zlib.createGzip();
+const dynamoDBGzipStream = fs.createWriteStream(dynamoDbFilePath, {
   encoding: "utf-8",
 });
+dynamoDBStream.pipe(dynamoDBGzipStream);
 
 export const algoliaStream = fs.createWriteStream(algoliaIndexFilePath, {
   encoding: "utf-8",

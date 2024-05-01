@@ -59,6 +59,7 @@ inputStream.on("open", () => {
 
 inputStream.on("end", () => {
   console.log({ numLines, numSuccess, numError });
+  dynamoDBStream.end();
   algoliaStream.end("]");
   errorStream.end();
 });
