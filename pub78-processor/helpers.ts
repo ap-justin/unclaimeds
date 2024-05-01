@@ -21,7 +21,7 @@ export const algoliaIndexFormat: Formatter<Algolia.EndowRecord> = (
     active_in_countries: ["United States"],
     endow_designation: "Charity",
     kyc_donors_only: false,
-    claimed: true,
+    claimed: false,
     env: endow.env,
     published: true,
   };
