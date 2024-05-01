@@ -10,7 +10,7 @@ const errorFilePath = path.join(__dirname, "errors.txt");
 /** used to determine if put trailing comma */
 export const lastItemEIN = "002237333";
 export const env: Environment = "staging";
-export const startingId = 200;
+export const startingId = 200; //make sure to query endowments_v2 per stage
 
 export const inputStream = fs.createReadStream(inputFilePath, {
   encoding: "utf8",
